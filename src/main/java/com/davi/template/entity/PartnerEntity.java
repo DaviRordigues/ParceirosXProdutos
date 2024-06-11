@@ -1,4 +1,4 @@
-package com.davi.template.Entity;
+package com.davi.template.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

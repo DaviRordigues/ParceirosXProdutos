@@ -1,5 +1,5 @@
-package com.davi.template.Service;
-import com.davi.template.Entity.PartnerEntity;
+package com.davi.template.service;
+import com.davi.template.entity.PartnerEntity;
 
 
 import java.util.List;

@@ -1,6 +1,6 @@
-package com.davi.template.Repositories;
+package com.davi.template.repositories;
 
-import com.davi.template.Entity.PartnerEntity;
+import com.davi.template.entity.PartnerEntity;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 

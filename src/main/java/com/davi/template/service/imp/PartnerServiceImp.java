@@ -1,10 +1,10 @@
-package com.davi.template.Service.IMP;
+package com.davi.template.service.imp;
 
-import com.davi.template.Entity.PartnerEntity;
+import com.davi.template.entity.PartnerEntity;
 
 
-import com.davi.template.Repositories.PartnerRepository;
-import com.davi.template.Service.PartnerService;
+import com.davi.template.repositories.PartnerRepository;
+import com.davi.template.service.PartnerService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
