@@ -1,6 +1,8 @@
 package com.davi.template.service;
 
 import com.davi.template.entity.PartnerEntity;
+import com.davi.template.entity.ProductEntity;
+
 import java.util.List;
 
 public interface PartnerService {
@@ -9,4 +11,5 @@ public interface PartnerService {
     PartnerEntity createPartner(PartnerEntity partner);
     PartnerEntity updatePartner(String id, PartnerEntity partnerDetails);
     boolean deletePartner(String id);
+    PartnerEntity addProductToPartner(String partnerId, ProductEntity product);  // Adicionar este método
 }

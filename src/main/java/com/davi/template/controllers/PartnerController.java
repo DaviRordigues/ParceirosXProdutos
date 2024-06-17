@@ -1,6 +1,7 @@
 package com.davi.template.controllers;
 
 import com.davi.template.entity.PartnerEntity;
+import com.davi.template.entity.ProductEntity;
 import com.davi.template.service.PartnerService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -53,5 +54,14 @@ public class PartnerController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{partnerId}/products")
+    public ResponseEntity<PartnerEntity> addProductToPartner(@PathVariable String partnerId, @RequestBody ProductEntity product) {
+        PartnerEntity updatedPartner = partnerService.addProductToPartner(partnerId, product);
+        if (updatedPartner == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(updatedPartner);
     }
 }

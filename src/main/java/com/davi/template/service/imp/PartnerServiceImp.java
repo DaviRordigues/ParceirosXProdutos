@@ -1,9 +1,11 @@
 package com.davi.template.service.imp;
 
 import com.davi.template.entity.PartnerEntity;
+import com.davi.template.entity.ProductEntity;
 import com.davi.template.repositories.PartnerRepository;
 import com.davi.template.service.PartnerService;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 
 @Service
@@ -38,6 +40,7 @@ public class PartnerServiceImp implements PartnerService {
             return null;
         }
         existingPartner.setName(partnerDetails.getName());
+        existingPartner.setProducts(partnerDetails.getProducts());  // Adicionar esta linha
         return partnerRepository.save(existingPartner);
     }
 
@@ -48,6 +51,16 @@ public class PartnerServiceImp implements PartnerService {
         }
         partnerRepository.deleteById(id);
         return true;
+    }
+
+    @Override
+    public PartnerEntity addProductToPartner(String partnerId, ProductEntity product) {
+        PartnerEntity partner = getPartnerById(partnerId);
+        if (partner == null) {
+            return null;
+        }
+        partner.getProducts().add(product);
+        return partnerRepository.save(partner);
     }
 
     private String generateIdFromName(String name) {
