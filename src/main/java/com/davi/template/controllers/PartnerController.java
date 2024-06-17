@@ -1,7 +1,6 @@
 package com.davi.template.controllers;
 
 import com.davi.template.entity.PartnerEntity;
-
 import com.davi.template.service.PartnerService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -9,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
 
 @RestController
 @RequestMapping("/partners")

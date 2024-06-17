@@ -2,9 +2,9 @@ package com.davi.template.service.imp;
 
 import com.davi.template.entity.ProductEntity;
 import com.davi.template.repositories.ProductRepository;
+import com.davi.template.repositories.PartnerRepository;
 import com.davi.template.service.ProductService;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Random;
 
@@ -12,9 +12,11 @@ import java.util.Random;
 public class ProductServiceImp implements ProductService {
 
     private final ProductRepository productRepository;
+    private final PartnerRepository partnerRepository;
 
-    public ProductServiceImp(ProductRepository productRepository) {
+    public ProductServiceImp(ProductRepository productRepository, PartnerRepository partnerRepository) {
         this.productRepository = productRepository;
+        this.partnerRepository = partnerRepository;
     }
 
     @Override
@@ -28,7 +30,15 @@ public class ProductServiceImp implements ProductService {
     }
 
     @Override
+    public List<ProductEntity> getProductsByPartnerId(String partnerId) {
+        return productRepository.findByPartnerId(partnerId);
+    }
+
+    @Override
     public ProductEntity createProduct(ProductEntity product) {
+        if (product.getPartnerId() == null || !partnerRepository.existsById(product.getPartnerId())) {
+            throw new IllegalArgumentException("Invalid partnerId");
+        }
         product.setSkuId(generateSkuId());
         return productRepository.save(product);
     }
@@ -39,8 +49,12 @@ public class ProductServiceImp implements ProductService {
         if (existingProduct == null) {
             return null;
         }
+        if (productDetails.getPartnerId() == null || !partnerRepository.existsById(productDetails.getPartnerId())) {
+            throw new IllegalArgumentException("Invalid partnerId");
+        }
         existingProduct.setName(productDetails.getName());
         existingProduct.setPrice(productDetails.getPrice());
+        existingProduct.setPartnerId(productDetails.getPartnerId());
         return productRepository.save(existingProduct);
     }
 
