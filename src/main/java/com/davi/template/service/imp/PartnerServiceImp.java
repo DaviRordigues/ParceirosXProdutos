@@ -7,6 +7,8 @@ import com.davi.template.service.PartnerService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.Random;
 
 @Service
 public class PartnerServiceImp implements PartnerService {
@@ -30,17 +32,28 @@ public class PartnerServiceImp implements PartnerService {
     @Override
     public PartnerEntity createPartner(PartnerEntity partner) {
         partner.setId(generateIdFromName(partner.getName()));
+        if (partner.getProducts() != null) {
+            for (ProductEntity product : partner.getProducts()) {
+                product.setSkuId(generateSkuId());
+            }
+        }
         return partnerRepository.save(partner);
     }
 
     @Override
     public PartnerEntity updatePartner(String id, PartnerEntity partnerDetails) {
-        PartnerEntity existingPartner = partnerRepository.findById(id).orElse(null);
-        if (existingPartner == null) {
+        Optional<PartnerEntity> existingPartnerOpt = partnerRepository.findById(id);
+        if (existingPartnerOpt.isEmpty()) {
             return null;
         }
+        PartnerEntity existingPartner = existingPartnerOpt.get();
         existingPartner.setName(partnerDetails.getName());
-        existingPartner.setProducts(partnerDetails.getProducts());  // Adicionar esta linha
+        if (partnerDetails.getProducts() != null) {
+            existingPartner.setProducts(partnerDetails.getProducts());
+            for (ProductEntity product : existingPartner.getProducts()) {
+                product.setSkuId(generateSkuId());
+            }
+        }
         return partnerRepository.save(existingPartner);
     }
 
@@ -55,12 +68,7 @@ public class PartnerServiceImp implements PartnerService {
 
     @Override
     public PartnerEntity addProductToPartner(String partnerId, ProductEntity product) {
-        PartnerEntity partner = getPartnerById(partnerId);
-        if (partner == null) {
-            return null;
-        }
-        partner.getProducts().add(product);
-        return partnerRepository.save(partner);
+        return null;
     }
 
     private String generateIdFromName(String name) {
@@ -72,5 +80,11 @@ public class PartnerServiceImp implements PartnerService {
             }
         }
         return idBuilder.toString().toLowerCase();
+    }
+
+    private String generateSkuId() {
+        Random random = new Random();
+        int number = 100000 + random.nextInt(900000);
+        return "SKU" + number;
     }
 }
