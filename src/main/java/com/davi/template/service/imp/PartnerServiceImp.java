@@ -47,15 +47,20 @@ public class PartnerServiceImp implements PartnerService {
             return null;
         }
         PartnerEntity existingPartner = existingPartnerOpt.get();
-        existingPartner.setName(partnerDetails.getName());
+
+        // Atualiza apenas os campos fornecidos
+        if (partnerDetails.getName() != null) {
+            existingPartner.setName(partnerDetails.getName());
+        }
+
+        // Não atualiza a lista de produtos se não estiver presente nos detalhes fornecidos
         if (partnerDetails.getProducts() != null) {
             existingPartner.setProducts(partnerDetails.getProducts());
-            for (ProductEntity product : existingPartner.getProducts()) {
-                product.setSkuId(generateSkuId());
-            }
         }
+
         return partnerRepository.save(existingPartner);
     }
+
 
     @Override
     public boolean deletePartner(String id) {

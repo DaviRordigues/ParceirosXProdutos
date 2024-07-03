@@ -46,6 +46,7 @@ public class PartnerController {
         return ResponseEntity.ok(updatedPartner);
     }
 
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePartner(@PathVariable String id) {
         boolean deleted = partnerService.deletePartner(id);
