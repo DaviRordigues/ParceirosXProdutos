@@ -6,6 +6,7 @@ import com.davi.template.repositories.PartnerRepository;
 import com.davi.template.service.PartnerService;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -35,6 +36,7 @@ public class PartnerServiceImp implements PartnerService {
         if (partner.getProducts() != null) {
             for (ProductEntity product : partner.getProducts()) {
                 product.setSkuId(generateSkuId());
+                product.setCategory(generateCategoryId()); // Gerar categoria
             }
         }
         return partnerRepository.save(partner);
@@ -48,19 +50,16 @@ public class PartnerServiceImp implements PartnerService {
         }
         PartnerEntity existingPartner = existingPartnerOpt.get();
 
-        // Atualiza apenas os campos fornecidos
         if (partnerDetails.getName() != null) {
             existingPartner.setName(partnerDetails.getName());
         }
 
-        // Não atualiza a lista de produtos se não estiver presente nos detalhes fornecidos
         if (partnerDetails.getProducts() != null) {
             existingPartner.setProducts(partnerDetails.getProducts());
         }
 
         return partnerRepository.save(existingPartner);
     }
-
 
     @Override
     public boolean deletePartner(String id) {
@@ -74,6 +73,27 @@ public class PartnerServiceImp implements PartnerService {
     @Override
     public PartnerEntity addProductToPartner(String partnerId, ProductEntity product) {
         return null;
+    }
+
+    public List<PartnerEntity> createBulkPartners(int numPartners, int numProductsPerPartner) {
+        List<PartnerEntity> partners = new ArrayList<>();
+        for (int i = 0; i < numPartners; i++) {
+            List<ProductEntity> products = new ArrayList<>();
+            for (int j = 0; j < numProductsPerPartner; j++) {
+                products.add(ProductEntity.builder()
+                        .skuId(generateSkuId())
+                        .name("Product " + j)
+                        .price(new Random().nextDouble() * 100)
+                        .category(generateCategoryId())
+                        .build());
+            }
+            partners.add(PartnerEntity.builder()
+                    .id(generateIdFromName("Partner " + i))
+                    .name("Partner " + i)
+                    .products(products)
+                    .build());
+        }
+        return partnerRepository.saveAll(partners);
     }
 
     private String generateIdFromName(String name) {
@@ -91,5 +111,19 @@ public class PartnerServiceImp implements PartnerService {
         Random random = new Random();
         int number = 100000 + random.nextInt(900000);
         return "SKU" + number;
+    }
+
+    private String generateCategoryId() {
+        Random random = new Random();
+        StringBuilder categoryId = new StringBuilder("LIV");
+        for (int i = 0; i < 5; i++) {
+            int nextChar = random.nextInt(36); // 0-9 and A-Z
+            if (nextChar < 10) {
+                categoryId.append((char) ('0' + nextChar));
+            } else {
+                categoryId.append((char) ('A' + nextChar - 10));
+            }
+        }
+        return categoryId.toString();
     }
 }

@@ -11,5 +11,6 @@ public interface PartnerService {
     PartnerEntity createPartner(PartnerEntity partner);
     PartnerEntity updatePartner(String id, PartnerEntity partnerDetails);
     boolean deletePartner(String id);
-    PartnerEntity addProductToPartner(String partnerId, ProductEntity product);  // Adicionar este método
+    PartnerEntity addProductToPartner(String partnerId, ProductEntity product);
+    List<PartnerEntity> createBulkPartners(int numPartners, int numProductsPerPartner); // Adicione este método
 }

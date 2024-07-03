@@ -46,7 +46,6 @@ public class PartnerController {
         return ResponseEntity.ok(updatedPartner);
     }
 
-
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePartner(@PathVariable String id) {
         boolean deleted = partnerService.deletePartner(id);
@@ -54,5 +53,11 @@ public class PartnerController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/bulk-create")
+    public ResponseEntity<List<PartnerEntity>> createBulkPartners(@RequestParam int numPartners, @RequestParam int numProductsPerPartner) {
+        List<PartnerEntity> createdPartners = partnerService.createBulkPartners(numPartners, numProductsPerPartner);
+        return ResponseEntity.ok(createdPartners);
     }
 }
