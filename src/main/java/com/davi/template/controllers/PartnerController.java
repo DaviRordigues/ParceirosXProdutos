@@ -55,9 +55,9 @@ public class PartnerController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/bulk-create")
-    public ResponseEntity<List<PartnerEntity>> createBulkPartners(@RequestParam int numPartners, @RequestParam int numProductsPerPartner) {
-        List<PartnerEntity> createdPartners = partnerService.createBulkPartners(numPartners, numProductsPerPartner);
-        return ResponseEntity.ok(createdPartners);
+    @GetMapping("/bulk-create")
+    public ResponseEntity<Void> createBulkPartners() {
+        partnerService.createBulkPartners();
+        return ResponseEntity.ok().build();
     }
 }
