@@ -1,32 +1,23 @@
 package com.davi.template.service.imp;
 
-import com.davi.template.dtos.PartnerDTO;
 import com.davi.template.entity.PartnerEntity;
 import com.davi.template.entity.ProductEntity;
 import com.davi.template.repositories.PartnerRepository;
 import com.davi.template.service.PartnerService;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.sun.jdi.Type;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
 @Service
-public class PartnerServiceImp implements PartnerService {
+public class PartnerServiceImpl implements PartnerService {
     @Value("${partners.file.path}")
     private String partnersFilePath;
-
     private final PartnerRepository partnerRepository;
 
-    public PartnerServiceImp(PartnerRepository partnerRepository) {
+    public PartnerServiceImpl(PartnerRepository partnerRepository) {
         this.partnerRepository = partnerRepository;
     }
 
@@ -46,7 +37,7 @@ public class PartnerServiceImp implements PartnerService {
         if (partner.getProducts() != null) {
             for (ProductEntity product : partner.getProducts()) {
                 product.setSkuId(generateSkuId());
-                product.setCategory(generateCategoryId()); // Gerar categoria
+                product.setCategory(generateCategoryId());
             }
         }
         return partnerRepository.save(partner);
@@ -59,15 +50,12 @@ public class PartnerServiceImp implements PartnerService {
             return null;
         }
         PartnerEntity existingPartner = existingPartnerOpt.get();
-
         if (partnerDetails.getName() != null) {
             existingPartner.setName(partnerDetails.getName());
         }
-
         if (partnerDetails.getProducts() != null) {
             existingPartner.setProducts(partnerDetails.getProducts());
         }
-
         return partnerRepository.save(existingPartner);
     }
 
@@ -81,44 +69,23 @@ public class PartnerServiceImp implements PartnerService {
     }
 
     @Override
-    public PartnerEntity addProductToPartner(String partnerId, ProductEntity product) {
-        return null;
+    public void createBulkPartners() {
+        // Implementation for bulk creation
     }
 
     @Override
-    public void createBulkPartners() {
-        ObjectMapper objectMapper = new ObjectMapper();
-        try (InputStream inputStream = getClass().getResourceAsStream("/static/partners.json")) {
-            if (inputStream == null) {
-                throw new FileNotFoundException("Resource not found: /static/partners.json");
+    public PartnerEntity addProductToPartner(String partnerId, ProductEntity product) {
+        Optional<PartnerEntity> optionalPartner = partnerRepository.findById(partnerId);
+        if (optionalPartner.isPresent()) {
+            PartnerEntity partner = optionalPartner.get();
+            if (partner.getProducts() == null) {
+                partner.setProducts(new ArrayList<>());
             }
-
-            List<PartnerDTO> partnerDTOs = objectMapper.readValue(inputStream, new TypeReference<List<PartnerDTO>>() {});
-            List<PartnerEntity> partnerEntities = new ArrayList<>();
-
-            // Convert PartnerDTO to PartnerEntity if needed
-            for (PartnerDTO dto : partnerDTOs) {
-                // Supõe-se que haja um método para converter DTO para Entity
-                PartnerEntity entity = convertDtoToEntity(dto);
-                partnerEntities.add(entity);
-            }
-
-            // Agora você pode usar a lista partnerEntities conforme necessário
-            System.out.println("Bulk partners created successfully");
-        } catch (IOException e) {
-            e.printStackTrace();
+            partner.getProducts().add(product);
+            return partnerRepository.save(partner);
         }
+        return null;
     }
-
-    private PartnerEntity convertDtoToEntity(PartnerDTO dto) {
-        // Implementação de exemplo - você deve preencher os detalhes de conversão necessários
-        PartnerEntity entity = new PartnerEntity();
-        entity.setId(dto.getId());
-        entity.setName(dto.getName());
-        // Continue com outras propriedades conforme necessário
-        return entity;
-    }
-
 
     private String generateIdFromName(String name) {
         String[] words = name.split(" ");
@@ -141,7 +108,7 @@ public class PartnerServiceImp implements PartnerService {
         Random random = new Random();
         StringBuilder categoryId = new StringBuilder("LIV");
         for (int i = 0; i < 5; i++) {
-            int nextChar = random.nextInt(36); // 0-9 and A-Z
+            int nextChar = random.nextInt(36);
             if (nextChar < 10) {
                 categoryId.append((char) ('0' + nextChar));
             } else {

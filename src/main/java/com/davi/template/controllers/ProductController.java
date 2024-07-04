@@ -1,7 +1,9 @@
 package com.davi.template.controllers;
 
 import com.davi.template.entity.ProductEntity;
+import com.davi.template.entity.PartnerEntity;
 import com.davi.template.service.ProductService;
+import com.davi.template.service.PartnerService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,7 @@ import java.util.List;
 public class ProductController {
 
     private final ProductService productService;
+    private final PartnerService partnerService;
 
     @GetMapping
     public ResponseEntity<List<ProductEntity>> getAllProducts() {
@@ -31,33 +34,28 @@ public class ProductController {
         return ResponseEntity.ok(product);
     }
 
-    @GetMapping("/partner/{partnerId}")
-    public ResponseEntity<List<ProductEntity>> getProductsByPartnerId(@PathVariable String partnerId) {
-        List<ProductEntity> products = productService.getProductsByPartnerId(partnerId);
-        return ResponseEntity.ok(products);
-    }
-
     @PostMapping
     public ResponseEntity<ProductEntity> createProduct(@RequestBody ProductEntity product) {
-        try {
-            ProductEntity createdProduct = productService.createProduct(product);
-            return ResponseEntity.status(HttpStatus.CREATED).body(createdProduct);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        ProductEntity createdProduct = productService.createProduct(product);
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdProduct);
+    }
+
+    @PostMapping("/{partnerId}/addProduct")
+    public ResponseEntity<PartnerEntity> addProductToPartner(@PathVariable String partnerId, @RequestBody ProductEntity product) {
+        PartnerEntity updatedPartner = partnerService.addProductToPartner(partnerId, product);
+        if (updatedPartner == null) {
+            return ResponseEntity.notFound().build();
         }
+        return ResponseEntity.ok(updatedPartner);
     }
 
     @PutMapping("/{skuId}")
     public ResponseEntity<ProductEntity> updateProduct(@PathVariable String skuId, @RequestBody ProductEntity productDetails) {
-        try {
-            ProductEntity updatedProduct = productService.updateProduct(skuId, productDetails);
-            if (updatedProduct == null) {
-                return ResponseEntity.notFound().build();
-            }
-            return ResponseEntity.ok(updatedProduct);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        ProductEntity updatedProduct = productService.updateProduct(skuId, productDetails);
+        if (updatedProduct == null) {
+            return ResponseEntity.notFound().build();
         }
+        return ResponseEntity.ok(updatedProduct);
     }
 
     @DeleteMapping("/{skuId}")

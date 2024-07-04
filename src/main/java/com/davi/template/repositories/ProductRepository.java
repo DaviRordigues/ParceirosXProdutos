@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface ProductRepository extends MongoRepository<ProductEntity, String> {
-    // Remova o método findByPartnerId, pois não é mais necessário
+    List<ProductEntity> findByPartnerId(String partnerId);
 }
