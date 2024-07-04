@@ -44,6 +44,7 @@ public class ProductServiceImpl implements ProductService {
             skuId = generateSkuId();
         }
         product.setSkuId(skuId);
+        product.setCategory(generateCategoryId());
         logger.info("Creating product with SKU ID: {}", skuId);
         return productRepository.save(product);
     }
@@ -83,5 +84,19 @@ public class ProductServiceImpl implements ProductService {
         Random random = new Random();
         int number = 100000 + random.nextInt(900000);
         return "SKU" + number;
+    }
+
+    private String generateCategoryId() {
+        Random random = new Random();
+        StringBuilder categoryId = new StringBuilder("CAT");
+        for (int i = 0; i < 5; i++) {
+            int nextChar = random.nextInt(36);
+            if (nextChar < 10) {
+                categoryId.append((char) ('0' + nextChar));
+            } else {
+                categoryId.append((char) ('A' + nextChar - 10));
+            }
+        }
+        return categoryId.toString();
     }
 }

@@ -4,6 +4,7 @@ import com.davi.template.entity.PartnerEntity;
 import com.davi.template.entity.ProductEntity;
 import com.davi.template.repositories.PartnerRepository;
 import com.davi.template.service.PartnerService;
+import com.davi.template.service.ProductService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
@@ -16,9 +17,11 @@ public class PartnerServiceImpl implements PartnerService {
     @Value("${partners.file.path}")
     private String partnersFilePath;
     private final PartnerRepository partnerRepository;
+    private final ProductService productService;
 
-    public PartnerServiceImpl(PartnerRepository partnerRepository) {
+    public PartnerServiceImpl(PartnerRepository partnerRepository, ProductService productService) {
         this.partnerRepository = partnerRepository;
+        this.productService = productService;
     }
 
     @Override
@@ -36,8 +39,7 @@ public class PartnerServiceImpl implements PartnerService {
         partner.setId(generateIdFromName(partner.getName()));
         if (partner.getProducts() != null) {
             for (ProductEntity product : partner.getProducts()) {
-                product.setSkuId(generateSkuId());
-                product.setCategory(generateCategoryId());
+                productService.createProduct(product);
             }
         }
         return partnerRepository.save(partner);
@@ -78,10 +80,11 @@ public class PartnerServiceImpl implements PartnerService {
         Optional<PartnerEntity> optionalPartner = partnerRepository.findById(partnerId);
         if (optionalPartner.isPresent()) {
             PartnerEntity partner = optionalPartner.get();
+            ProductEntity createdProduct = productService.createProduct(product);
             if (partner.getProducts() == null) {
                 partner.setProducts(new ArrayList<>());
             }
-            partner.getProducts().add(product);
+            partner.getProducts().add(createdProduct);
             return partnerRepository.save(partner);
         }
         return null;
@@ -96,25 +99,5 @@ public class PartnerServiceImpl implements PartnerService {
             }
         }
         return idBuilder.toString().toLowerCase();
-    }
-
-    private String generateSkuId() {
-        Random random = new Random();
-        int number = 100000 + random.nextInt(900000);
-        return "SKU" + number;
-    }
-
-    private String generateCategoryId() {
-        Random random = new Random();
-        StringBuilder categoryId = new StringBuilder("LIV");
-        for (int i = 0; i < 5; i++) {
-            int nextChar = random.nextInt(36);
-            if (nextChar < 10) {
-                categoryId.append((char) ('0' + nextChar));
-            } else {
-                categoryId.append((char) ('A' + nextChar - 10));
-            }
-        }
-        return categoryId.toString();
     }
 }
