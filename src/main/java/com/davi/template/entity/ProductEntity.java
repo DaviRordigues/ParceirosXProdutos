@@ -17,4 +17,5 @@ public class ProductEntity {
     private double price;
     private String category;
     private String partnerId;
+
 }
