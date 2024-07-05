@@ -1,5 +1,6 @@
 package com.davi.template.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,6 +17,7 @@ public class ProductEntity {
     private String name;
     private double price;
     private String category;
-    private String partnerId;
 
+    @JsonIgnore
+    private String partnerId;
 }

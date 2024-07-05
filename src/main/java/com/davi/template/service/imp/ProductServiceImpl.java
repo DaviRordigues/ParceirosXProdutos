@@ -88,7 +88,7 @@ public class ProductServiceImpl implements ProductService {
 
     private String generateCategoryId() {
         Random random = new Random();
-        StringBuilder categoryId = new StringBuilder("CAT");
+        StringBuilder categoryId = new StringBuilder("LIV");
         for (int i = 0; i < 5; i++) {
             int nextChar = random.nextInt(36);
             if (nextChar < 10) {
