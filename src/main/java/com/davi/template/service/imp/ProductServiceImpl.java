@@ -1,8 +1,9 @@
 package com.davi.template.service.imp;
 
 import com.davi.template.entity.ProductEntity;
-import com.davi.template.repositories.ProductRepository;
+import com.davi.template.repositories.PartnerRepository;
 import com.davi.template.service.ProductService;
+import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -10,15 +11,12 @@ import java.util.List;
 import java.util.Random;
 
 @Service
-public class ProductServiceImpl implements ProductService {
+@AllArgsConstructor
+public class ProductServiceImpl  {
 
     private static final Logger logger = LoggerFactory.getLogger(ProductServiceImpl.class);
-    private final ProductRepository productRepository;
-
-    public ProductServiceImpl(ProductRepository productRepository) {
-        this.productRepository = productRepository;
-    }
-
+    private final PartnerRepository partnerRepository;
+    /*
     @Override
     public List<ProductEntity> getAllProducts() {
         logger.info("Fetching all products");
@@ -99,4 +97,6 @@ public class ProductServiceImpl implements ProductService {
         }
         return categoryId.toString();
     }
+    */
+
 }

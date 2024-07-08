@@ -1,5 +1,7 @@
 package com.davi.template.controllers;
 
+import com.davi.template.dtos.PartnerDTO;
+import com.davi.template.dtos.requests.PartnerRequestDTO;
 import com.davi.template.entity.PartnerEntity;
 import com.davi.template.service.PartnerService;
 import lombok.AllArgsConstructor;
@@ -32,8 +34,8 @@ public class PartnerController {
     }
 
     @PostMapping
-    public ResponseEntity<PartnerEntity> createPartner(@RequestBody PartnerEntity partner) {
-        PartnerEntity createdPartner = partnerService.createPartner(partner);
+    public ResponseEntity<PartnerDTO> createPartner(@RequestBody PartnerRequestDTO partnerRequestDTO) {
+        PartnerDTO createdPartner = partnerService.createPartner(partnerRequestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdPartner);
     }
 

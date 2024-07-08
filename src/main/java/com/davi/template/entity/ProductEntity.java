@@ -18,6 +18,4 @@ public class ProductEntity {
     private double price;
     private String category;
 
-    @JsonIgnore
-    private String partnerId;
 }

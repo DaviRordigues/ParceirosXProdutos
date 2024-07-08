@@ -16,7 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 public class ProductController {
 
-    private final ProductService productService;
+  /* private final ProductService productService;
     private final PartnerService partnerService;
 
     @GetMapping
@@ -66,4 +66,8 @@ public class ProductController {
         }
         return ResponseEntity.noContent().build();
     }
+
+
+
+   */
 }

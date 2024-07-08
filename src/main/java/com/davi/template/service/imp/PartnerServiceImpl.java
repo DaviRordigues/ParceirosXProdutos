@@ -1,27 +1,27 @@
 package com.davi.template.service.imp;
 
+import com.davi.template.dtos.PartnerDTO;
+import com.davi.template.dtos.requests.PartnerRequestDTO;
 import com.davi.template.entity.PartnerEntity;
 import com.davi.template.entity.ProductEntity;
 import com.davi.template.repositories.PartnerRepository;
 import com.davi.template.service.PartnerService;
-import com.davi.template.service.ProductService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 
 @Service
 public class PartnerServiceImpl implements PartnerService {
     @Value("${partners.file.path}")
     private String partnersFilePath;
     private final PartnerRepository partnerRepository;
-    private final ProductService productService;
+    //private final ProductService productService;
 
-    public PartnerServiceImpl(PartnerRepository partnerRepository, ProductService productService) {
+    public PartnerServiceImpl(PartnerRepository partnerRepository) {
         this.partnerRepository = partnerRepository;
-        this.productService = productService;
     }
 
     @Override
@@ -35,14 +35,21 @@ public class PartnerServiceImpl implements PartnerService {
     }
 
     @Override
-    public PartnerEntity createPartner(PartnerEntity partner) {
-        partner.setId(generateIdFromName(partner.getName()));
-        if (partner.getProducts() != null) {
-            for (ProductEntity product : partner.getProducts()) {
-                productService.createProduct(product);
-            }
-        }
-        return partnerRepository.save(partner);
+    public PartnerDTO createPartner(PartnerRequestDTO partnerRequestDTO) {
+        PartnerEntity partnerEntity = PartnerEntity
+                .builder()
+                .id(generateIdFromName(partnerRequestDTO.getName()))
+                .name(partnerRequestDTO.getName())
+                .build();
+
+        partnerEntity = partnerRepository.save(partnerEntity);
+
+        return PartnerDTO
+                .builder()
+                .id(partnerEntity.getId())
+                .name(partnerEntity.getName())
+                .products(partnerEntity.getProducts())
+                .build();
     }
 
     @Override
@@ -72,7 +79,6 @@ public class PartnerServiceImpl implements PartnerService {
 
     @Override
     public void createBulkPartners() {
-        // Implementation for bulk creation
     }
 
     @Override
@@ -80,11 +86,11 @@ public class PartnerServiceImpl implements PartnerService {
         Optional<PartnerEntity> optionalPartner = partnerRepository.findById(partnerId);
         if (optionalPartner.isPresent()) {
             PartnerEntity partner = optionalPartner.get();
-            ProductEntity createdProduct = productService.createProduct(product);
+         //*   ProductEntity createdProduct = productService.createProduct(product);
             if (partner.getProducts() == null) {
                 partner.setProducts(new ArrayList<>());
             }
-            partner.getProducts().add(createdProduct);
+     //*       partner.getProducts().add(createdProduct);
             return partnerRepository.save(partner);
         }
         return null;
