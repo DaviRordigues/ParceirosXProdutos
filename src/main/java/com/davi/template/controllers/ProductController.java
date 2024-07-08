@@ -1,73 +1,56 @@
 package com.davi.template.controllers;
 
+import com.davi.template.dtos.ProductDTO;
+import com.davi.template.dtos.requests.ProductRequestDTO;
 import com.davi.template.entity.ProductEntity;
-import com.davi.template.entity.PartnerEntity;
 import com.davi.template.service.ProductService;
-import com.davi.template.service.PartnerService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/products")
+@RequestMapping("products/")
 @AllArgsConstructor
 public class ProductController {
-
-  /* private final ProductService productService;
-    private final PartnerService partnerService;
-
-    @GetMapping
-    public ResponseEntity<List<ProductEntity>> getAllProducts() {
-        List<ProductEntity> products = productService.getAllProducts();
-        return ResponseEntity.ok(products);
-    }
-
-    @GetMapping("/{skuId}")
-    public ResponseEntity<ProductEntity> getProductBySkuId(@PathVariable String skuId) {
-        ProductEntity product = productService.getProductBySkuId(skuId);
-        if (product == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(product);
-    }
-
-    @PostMapping
-    public ResponseEntity<ProductEntity> createProduct(@RequestBody ProductEntity product) {
-        ProductEntity createdProduct = productService.createProduct(product);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdProduct);
-    }
-
-    @PostMapping("/{partnerId}/addProduct")
-    public ResponseEntity<PartnerEntity> addProductToPartner(@PathVariable String partnerId, @RequestBody ProductEntity product) {
-        PartnerEntity updatedPartner = partnerService.addProductToPartner(partnerId, product);
-        if (updatedPartner == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(updatedPartner);
-    }
-
-    @PutMapping("/{skuId}")
-    public ResponseEntity<ProductEntity> updateProduct(@PathVariable String skuId, @RequestBody ProductEntity productDetails) {
-        ProductEntity updatedProduct = productService.updateProduct(skuId, productDetails);
-        if (updatedProduct == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(updatedProduct);
-    }
-
-    @DeleteMapping("/{skuId}")
-    public ResponseEntity<Void> deleteProduct(@PathVariable String skuId) {
-        boolean deleted = productService.deleteProduct(skuId);
-        if (!deleted) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.noContent().build();
-    }
-
-
-
-   */
+	
+	private final ProductService productService;
+	
+	@GetMapping("partner/{partnerId}")
+	public ResponseEntity<List<ProductDTO>> getAllProductsFromPartner(@PathVariable String partnerId) {
+		return ResponseEntity.ok(productService.getAllProducts(partnerId));
+	}
+	
+	@GetMapping("sku/{skuId}")
+	public ResponseEntity<ProductEntity> getProductBySkuId(@PathVariable String skuId) {
+		return ResponseEntity.ok(productService.getProductBySkuId(skuId));
+	}
+	
+	@PostMapping("partner/{partnerId}")
+	public ResponseEntity<List<ProductDTO>> createProduct(@PathVariable String partnerId,
+	                                                      @RequestBody List<ProductRequestDTO> productRequestDTOs) {
+		List<ProductDTO> createdProducts = productService.createProduct(partnerId, productRequestDTOs);
+		return ResponseEntity.status(HttpStatus.CREATED).body(createdProducts);
+	}
+	
+	@PutMapping("/{skuId}")
+	public ResponseEntity<ProductDTO> updateProduct(@PathVariable String skuId,
+	                                                @RequestBody ProductRequestDTO productRequestDTO) {
+		return ResponseEntity.ok(productService.updateProduct(skuId, productRequestDTO));
+	}
+	
+	@DeleteMapping("/{skuId}")
+	public ResponseEntity<Void> deleteProduct(@PathVariable String skuId) {
+		productService.deleteProduct(skuId);
+		return ResponseEntity.noContent().build();
+	}
 }

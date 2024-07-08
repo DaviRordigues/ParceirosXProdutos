@@ -1,6 +1,5 @@
 package com.davi.template.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,10 +11,10 @@ import org.springframework.data.annotation.Id;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ProductEntity {
-    @Id
-    private String skuId;
-    private String name;
-    private double price;
-    private String category;
-
+	@Id
+	private String skuId;
+	private String name;
+	private double price;
+	private String category;
+	
 }

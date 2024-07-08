@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PartnerDTO {
-    private String id;
-    private String name;
-    private List<ProductEntity> products;
+	private String id;
+	private String name;
+	private List<ProductEntity> products;
 }

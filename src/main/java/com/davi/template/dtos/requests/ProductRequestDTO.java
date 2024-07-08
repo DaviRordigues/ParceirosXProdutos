@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class PartnerRequestDTO {
+public class ProductRequestDTO {
 	private String name;
+	private double price;
 }

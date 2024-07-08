@@ -15,8 +15,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PartnerEntity {
-    @Id
-    private String id;
-    private String name;
-    private List<ProductEntity> products;
+	@Id
+	private String id;
+	private String name;
+	private List<ProductEntity> products;
 }
