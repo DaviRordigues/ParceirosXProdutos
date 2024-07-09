@@ -25,19 +25,17 @@ public class PartnerController {
 	
 	private final PartnerService partnerService;
 	
-	//TODO: MODIFICAR PARA DTO
+	//TODO: MODIFICAR PARA DTO(CORRIGIDO)
 	@GetMapping
-	public ResponseEntity<List<PartnerEntity>> getAllPartners() {
-		List<PartnerEntity> partners = partnerService.getAllPartners();
+	public ResponseEntity<List<PartnerDTO>> getAllPartners() {
+		List<PartnerDTO> partners = partnerService.getAllPartners();
 		return ResponseEntity.ok(partners);
 	}
-	
-	//TODO: MODIFICAR PARA DTO
+	//TODO: MODIFICAR PARA DTO(CORRIGIDO)
 	@GetMapping("/{id}")
-	public ResponseEntity<PartnerEntity> getPartnerById(@PathVariable String id) {
+	public ResponseEntity<PartnerDTO> getPartnerById(@PathVariable String id) {
 		return ResponseEntity.ok(partnerService.getPartnerById(id));
 	}
-	
 	@PostMapping
 	public ResponseEntity<PartnerDTO> createPartner(@RequestBody PartnerRequestDTO partnerRequestDTO) {
 		return ResponseEntity.status(HttpStatus.CREATED).body(partnerService.createPartner(partnerRequestDTO));

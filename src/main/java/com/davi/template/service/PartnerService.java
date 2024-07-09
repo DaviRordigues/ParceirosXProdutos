@@ -7,9 +7,9 @@ import com.davi.template.entity.PartnerEntity;
 import java.util.List;
 
 public interface PartnerService {
-	List<PartnerEntity> getAllPartners();
-	
-	PartnerEntity getPartnerById(String id);
+	List<PartnerDTO> getAllPartners();
+
+	PartnerDTO  getPartnerById(String id);
 	
 	PartnerDTO createPartner(PartnerRequestDTO partnerRequestDTO);
 	

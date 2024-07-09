@@ -8,8 +8,8 @@ import java.util.List;
 
 public interface ProductService {
 	List<ProductDTO> getAllProducts(String partnerId);
-	
-	ProductEntity getProductBySkuId(String skuId);
+
+	ProductDTO  getProductBySkuId(String skuId);
 	
 	List<ProductDTO> createProduct(String partnerId, List<ProductRequestDTO> products);
 	

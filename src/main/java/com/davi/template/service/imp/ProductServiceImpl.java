@@ -73,17 +73,16 @@ public class ProductServiceImpl implements ProductService {
 				.price(productRequestDTO.getPrice())
 				.build();
 	}
-	
+
 	@Override
-	public ProductEntity getProductBySkuId(String skuId) {
+	public ProductDTO getProductBySkuId(String skuId) {
 		Optional<PartnerEntity> partnerEntity = partnerRepository.findByProductsSkuId(skuId);
 		if (partnerEntity.isPresent()) {
-			PartnerDTO partnerDTO = createDTOFromPartnerEntity(partnerEntity.get());
-			return partnerDTO.getProducts().getFirst();
+			ProductEntity productEntity = filterProductBySkuId(skuId, partnerEntity.get().getProducts());
+			return createProductDTOFromEntity(productEntity);
 		}
 		throw new RuntimeException("Cannot found skuId with id: " + skuId);
 	}
-	
 	@Override
 	public void deleteProduct(String skuId) {
 		PartnerEntity partner = findSkuId(skuId);
