@@ -28,7 +28,8 @@ public class PartnerServiceImpl implements PartnerService {
 	
 	@Override
 	public PartnerEntity getPartnerById(String id) {
-		return partnerRepository.findById(id).orElse(null);
+		PartnerEntity partnerEntity = findPartnerById(id);
+		return createPartnerDTOFromPartnerEntity(partnerEntity);
 	}
 	
 	@Override
@@ -51,40 +52,55 @@ public class PartnerServiceImpl implements PartnerService {
 	
 	@Override
 	public PartnerDTO updatePartner(String id, PartnerRequestDTO partnerRequestDTO) {
-		Optional<PartnerEntity> existingPartnerOpt = partnerRepository.findById(id);
-		if (existingPartnerOpt.isPresent()) {
-			PartnerEntity partnerEntity = PartnerEntity
-					.builder()
-					.id(generateIdFromName(partnerRequestDTO.getName()))
-					.name(partnerRequestDTO.getName())
-					.build();
-			
-			partnerEntity = partnerRepository.save(partnerEntity);
-			
-			return PartnerDTO
-					.builder()
-					.id(partnerEntity.getId())
-					.name(partnerEntity.getName())
-					.products(partnerEntity.getProducts())
-					.build();
-			
+		//Emcontrando a entidade trabalhada
+		PartnerEntity partnerEntity = findPartnerById(id);
+		
+		partnerRepository.delete(partnerEntity);
+		
+		//Modificação e persistencia do objeto
+		partnerEntity.setId(generateIdFromName(partnerRequestDTO.getName()));
+		partnerEntity.setName(partnerRequestDTO.getName());
+		
+		partnerEntity = partnerRepository.save(partnerEntity);
+		
+		//Conversão e retorno do dto
+		return PartnerDTO
+				.builder()
+				.id(partnerEntity.getId())
+				.name(partnerEntity.getName())
+				.products(partnerEntity.getProducts())
+				.build();
+		
+	}
+	
+	@Override
+	public PartnerEntity findPartnerById(String id) {
+		Optional<PartnerEntity> partnerEntityOptional = partnerRepository.findById(id);
+		if (partnerEntityOptional.isPresent()) {
+			return partnerEntityOptional.get();
 		}
+		//TODO: CRIAR UMA EXEÇÃO PERSONALIDADA
 		throw new RuntimeException("Cannot found partnerId: " + id);
 	}
 	
 	@Override
-	public boolean deletePartner(String id) {
-		if (!partnerRepository.existsById(id)) {
-			return false;
-		}
-		partnerRepository.deleteById(id);
-		return true;
+	public void deletePartner(String id) {
+		PartnerEntity partnerEntity = findPartnerById(id);
+		partnerRepository.delete(partnerEntity);
 	}
 	
 	@Override
 	public void createBulkPartners() {
 	}
 	
+	private PartnerEntity createPartnerDTOFromPartnerEntity(PartnerEntity partnerEntity) {
+		return PartnerEntity
+				.builder()
+				.id(partnerEntity.getId())
+				.name(partnerEntity.getName())
+				.products(partnerEntity.getProducts())
+				.build();
+	}
 	private String generateIdFromName(String name) {
 		String[] words = name.split(" ");
 		StringBuilder idBuilder = new StringBuilder();

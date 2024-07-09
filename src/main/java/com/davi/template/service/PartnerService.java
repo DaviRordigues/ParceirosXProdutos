@@ -15,7 +15,9 @@ public interface PartnerService {
 	
 	PartnerDTO updatePartner(String id, PartnerRequestDTO partnerDetails);
 	
-	boolean deletePartner(String id);
+	PartnerEntity findPartnerById(String id);
+	
+	void deletePartner(String id);
 	
 	void createBulkPartners();
 }

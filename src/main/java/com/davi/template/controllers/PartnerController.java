@@ -25,19 +25,17 @@ public class PartnerController {
 	
 	private final PartnerService partnerService;
 	
+	//TODO: MODIFICAR PARA DTO
 	@GetMapping
 	public ResponseEntity<List<PartnerEntity>> getAllPartners() {
 		List<PartnerEntity> partners = partnerService.getAllPartners();
 		return ResponseEntity.ok(partners);
 	}
 	
+	//TODO: MODIFICAR PARA DTO
 	@GetMapping("/{id}")
 	public ResponseEntity<PartnerEntity> getPartnerById(@PathVariable String id) {
-		PartnerEntity partner = partnerService.getPartnerById(id);
-		if (partner == null) {
-			return ResponseEntity.notFound().build();
-		}
-		return ResponseEntity.ok(partner);
+		return ResponseEntity.ok(partnerService.getPartnerById(id));
 	}
 	
 	@PostMapping
@@ -53,11 +51,8 @@ public class PartnerController {
 	
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Void> deletePartner(@PathVariable String id) {
-		boolean deleted = partnerService.deletePartner(id);
-		if (!deleted) {
-			return ResponseEntity.notFound().build();
-		}
-		return ResponseEntity.noContent().build();
+		partnerService.deletePartner(id);
+		return ResponseEntity.ok().build();
 	}
 	
 	@GetMapping("/bulk-create")
