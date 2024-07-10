@@ -5,6 +5,8 @@ import com.davi.template.dtos.ProductDTO;
 import com.davi.template.dtos.requests.ProductRequestDTO;
 import com.davi.template.entity.PartnerEntity;
 import com.davi.template.entity.ProductEntity;
+import com.davi.template.exceptions.ProductNotFoundException;
+import com.davi.template.exceptions.SkuNotFoundException;
 import com.davi.template.repositories.PartnerRepository;
 import com.davi.template.service.PartnerService;
 import com.davi.template.service.ProductService;
@@ -15,7 +17,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -92,26 +93,26 @@ public class ProductServiceImpl implements ProductService {
 		
 		partnerRepository.save(partner);
 	}
-	
+	// TODO: CRIAR EXEÇOES PERSONALISADAS(CORIIGIDO)
+
 	private ProductEntity filterProductBySkuId(String skuId, List<ProductEntity> products) {
 		Optional<ProductEntity> optionalProductEntity = products.stream().filter(productEntity ->
 				productEntity.getSkuId().equals(skuId)).findFirst();
-		
-		if(optionalProductEntity.isPresent()){
+
+		if (optionalProductEntity.isPresent()) {
 			return optionalProductEntity.get();
 		}
-		//TODO: CRIAR UMA EXEÇÃO PERSONALIDADA
-		throw new RuntimeException(String.format("Cannot found skuId with id: %s in seller", skuId));
+		throw new ProductNotFoundException(String.format("Cannot found skuId with id: %s in seller", skuId));
 	}
-
+	// TODO: CRIAR EXEÇOES PERSONALISADAS(CORIIGIDO)
 	private PartnerEntity findSkuId(String skuId) {
 		Optional<PartnerEntity> partnerEntityOptional = partnerRepository.findByProductsSkuId(skuId);
-		if (partnerEntityOptional.isPresent()){
+		if (partnerEntityOptional.isPresent()) {
 			return partnerEntityOptional.get();
 		}
-		//TODO: CRIAR UMA EXEÇÃO PERSONALIDADA
-		throw new RuntimeException("Cannot found skuId with id: " + skuId);
+		throw new SkuNotFoundException("Cannot found skuId with id: " + skuId);
 	}
+
 
 	private List<ProductDTO> createProductDTOfromEntityList(List<ProductEntity> products) {
 		return products.stream().map(this::createProductDTOFromEntity).toList();
@@ -164,6 +165,8 @@ public class ProductServiceImpl implements ProductService {
 		}
 		return categoryId.toString();
 	}
+
+
 	
 	
 }
