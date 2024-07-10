@@ -30,7 +30,6 @@ public class ProductController {
 		return ResponseEntity.ok(productService.getAllProducts(partnerId));
 	}
 	
-	//TODO: MODIFICAR PARA DTO(CORRIGIDO)
 	@GetMapping("sku/{skuId}")
 	public ResponseEntity<ProductDTO> getProductBySkuId(@PathVariable String skuId) {
 		return ResponseEntity.ok(productService.getProductBySkuId(skuId));

@@ -1,7 +1,9 @@
 package com.davi.template.exceptions;
 
 public class SkuNotFoundException extends RuntimeException {
-    public SkuNotFoundException(String message) {
-        super(message);
-    }
+	// TODO: NECESSÁRIO TESTAR ESSA EXCEPTION NO POSTMAN, SEM UM HANDLER A EXEÇÃO MESMO QUE PERSONALIZADA NAO É MOSTRADA
+	
+	public SkuNotFoundException(String skuId) {
+		super("Cannot found skuId with id: " + skuId);
+	}
 }

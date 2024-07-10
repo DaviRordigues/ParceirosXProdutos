@@ -93,7 +93,6 @@ public class ProductServiceImpl implements ProductService {
 		
 		partnerRepository.save(partner);
 	}
-	// TODO: CRIAR EXEÇOES PERSONALISADAS(CORIIGIDO)
 
 	private ProductEntity filterProductBySkuId(String skuId, List<ProductEntity> products) {
 		Optional<ProductEntity> optionalProductEntity = products.stream().filter(productEntity ->
@@ -102,15 +101,14 @@ public class ProductServiceImpl implements ProductService {
 		if (optionalProductEntity.isPresent()) {
 			return optionalProductEntity.get();
 		}
-		throw new ProductNotFoundException(String.format("Cannot found skuId with id: %s in seller", skuId));
+		throw new ProductNotFoundException(skuId);
 	}
-	// TODO: CRIAR EXEÇOES PERSONALISADAS(CORIIGIDO)
 	private PartnerEntity findSkuId(String skuId) {
 		Optional<PartnerEntity> partnerEntityOptional = partnerRepository.findByProductsSkuId(skuId);
 		if (partnerEntityOptional.isPresent()) {
 			return partnerEntityOptional.get();
 		}
-		throw new SkuNotFoundException("Cannot found skuId with id: " + skuId);
+		throw new SkuNotFoundException(skuId);
 	}
 
 
