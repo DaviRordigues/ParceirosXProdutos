@@ -38,6 +38,6 @@ public class GlobalExceptionHandler {
         errorResponse.put("Code", "INTERNAL_SERVER_ERROR");
         errorResponse.put("Description", ex.getMessage());
 
-        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 }
