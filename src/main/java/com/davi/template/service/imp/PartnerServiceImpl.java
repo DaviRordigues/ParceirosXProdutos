@@ -10,32 +10,31 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class PartnerServiceImpl implements PartnerService {
 	@Value("${partners.file.path}")
 	private String partnersFilePath;
 	private final PartnerRepository partnerRepository;
-
+	
 	public PartnerServiceImpl(PartnerRepository partnerRepository) {
 		this.partnerRepository = partnerRepository;
 	}
-
+	
 	@Override
 	public List<PartnerDTO> getAllPartners() {
 		List<PartnerEntity> partners = partnerRepository.findAll();
 		return partners.stream()
 				.map(this::createPartnerDTOFromPartnerEntity)
-				.collect(Collectors.toList());
+				.toList();
 	}
-
+	
 	@Override
 	public PartnerDTO getPartnerById(String id) {
 		PartnerEntity partnerEntity = findPartnerById(id);
 		return createPartnerDTOFromPartnerEntity(partnerEntity);
 	}
-
+	
 	@Override
 	public PartnerDTO createPartner(PartnerRequestDTO partnerRequestDTO) {
 		PartnerEntity partnerEntity = PartnerEntity
@@ -43,26 +42,26 @@ public class PartnerServiceImpl implements PartnerService {
 				.id(generateIdFromName(partnerRequestDTO.getName()))
 				.name(partnerRequestDTO.getName())
 				.build();
-
+		
 		partnerEntity = partnerRepository.save(partnerEntity);
-
+		
 		return createPartnerDTOFromPartnerEntity(partnerEntity);
 	}
-
+	
 	@Override
 	public PartnerDTO updatePartner(String id, PartnerRequestDTO partnerRequestDTO) {
 		PartnerEntity partnerEntity = findPartnerById(id);
-
+		
 		partnerRepository.delete(partnerEntity);
-
+		
 		partnerEntity.setId(generateIdFromName(partnerRequestDTO.getName()));
 		partnerEntity.setName(partnerRequestDTO.getName());
-
+		
 		partnerEntity = partnerRepository.save(partnerEntity);
-
+		
 		return createPartnerDTOFromPartnerEntity(partnerEntity);
 	}
-
+	
 	@Override
 	public PartnerEntity findPartnerById(String id) {
 		Optional<PartnerEntity> partnerEntityOptional = partnerRepository.findById(id);
@@ -71,17 +70,17 @@ public class PartnerServiceImpl implements PartnerService {
 		}
 		throw new RuntimeException("Cannot found partnerId: " + id);
 	}
-
+	
 	@Override
 	public void deletePartner(String id) {
 		PartnerEntity partnerEntity = findPartnerById(id);
 		partnerRepository.delete(partnerEntity);
 	}
-
+	
 	@Override
 	public void createBulkPartners() {
 	}
-
+	
 	private PartnerDTO createPartnerDTOFromPartnerEntity(PartnerEntity partnerEntity) {
 		return PartnerDTO.builder()
 				.id(partnerEntity.getId())
@@ -89,7 +88,7 @@ public class PartnerServiceImpl implements PartnerService {
 				.products(partnerEntity.getProducts())
 				.build();
 	}
-
+	
 	private String generateIdFromName(String name) {
 		String[] words = name.split(" ");
 		StringBuilder idBuilder = new StringBuilder();

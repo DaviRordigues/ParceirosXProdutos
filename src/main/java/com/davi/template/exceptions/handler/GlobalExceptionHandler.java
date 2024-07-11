@@ -1,43 +1,34 @@
-package com.davi.template.exceptions;
+package com.davi.template.exceptions.handler;
 
+import com.davi.template.constants.ErrorCodes;
+import com.davi.template.exceptions.ExceptionResponse;
+import com.davi.template.exceptions.sku.SkuNotFoundException;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import java.util.HashMap;
-import java.util.Map;
+import org.springframework.web.context.request.WebRequest;
 
 @RestControllerAdvice
+@Log4j2
 public class GlobalExceptionHandler {
-
-    @ExceptionHandler(SkuNotFoundException.class)
-    public ResponseEntity<Map<String, Object>> handleSkuNotFoundException(SkuNotFoundException ex) {
-        Map<String, Object> errorResponse = new HashMap<>();
-        errorResponse.put("Error", "Sku Not Found");
-        errorResponse.put("Code", "SKU_NOT_FOUND");
-        errorResponse.put("Description", ex.getMessage());
-
-        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler(ProductNotFoundException.class)
-    public ResponseEntity<Map<String, Object>> handleProductNotFoundException(ProductNotFoundException ex) {
-        Map<String, Object> errorResponse = new HashMap<>();
-        errorResponse.put("Error", "Product Not Found");
-        errorResponse.put("Code", "PRODUCT_NOT_FOUND");
-        errorResponse.put("Description", ex.getMessage());
-
-        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<Map<String, Object>> handleGenericException(Exception ex) {
-        Map<String, Object> errorResponse = new HashMap<>();
-        errorResponse.put("Error", "Internal Server Error");
-        errorResponse.put("Code", "INTERNAL_SERVER_ERROR");
-        errorResponse.put("Description", ex.getMessage());
-
-        return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
-    }
+	@ExceptionHandler(Exception.class)
+	public final ResponseEntity<Object> handleAllExceptions(Exception ex, WebRequest request) {
+		log.error("GlobalExceptionHandler.handleAllExceptions - Unmapped error has occurred while processing HTTP request: [{}]", request, ex);
+		
+		request.getDescription(false);
+		ExceptionResponse exceptionResponse = new ExceptionResponse(ErrorCodes.INTERNAL_SERVER_ERROR, ex.getMessage());
+		
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(exceptionResponse);
+	}
+	
+	@ExceptionHandler(SkuNotFoundException.class)
+	public ResponseEntity<Object> handleSkuNotFoundException(SkuNotFoundException ex, WebRequest request) {
+		log.error("GlobalExceptionHandler.handleSkuNotFoundException - Cannot found sku in HTTP request: [{}]", request, ex);
+		
+		ExceptionResponse exceptionResponse = new ExceptionResponse(ErrorCodes.SKU_NOT_FOUND, ex.getMessage());
+		
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exceptionResponse);
+	}
 }

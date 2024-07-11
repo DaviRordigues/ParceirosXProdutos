@@ -1,12 +1,10 @@
 package com.davi.template.service.imp;
 
-import com.davi.template.dtos.PartnerDTO;
 import com.davi.template.dtos.ProductDTO;
 import com.davi.template.dtos.requests.ProductRequestDTO;
 import com.davi.template.entity.PartnerEntity;
 import com.davi.template.entity.ProductEntity;
-import com.davi.template.exceptions.ProductNotFoundException;
-import com.davi.template.exceptions.SkuNotFoundException;
+import com.davi.template.exceptions.sku.SkuNotFoundException;
 import com.davi.template.repositories.PartnerRepository;
 import com.davi.template.service.PartnerService;
 import com.davi.template.service.ProductService;
@@ -57,15 +55,14 @@ public class ProductServiceImpl implements ProductService {
 	public ProductDTO updateProduct(String skuId, ProductRequestDTO productRequestDTO) {
 		PartnerEntity partnerEntity = findSkuId(skuId);
 		ProductEntity productEntity = filterProductBySkuId(skuId, partnerEntity.getProducts());
-		List<ProductEntity> productEntities = partnerEntity.getProducts();
 		
+		List<ProductEntity> productEntities = partnerEntity.getProducts();
 		productEntities.remove(productEntity);
 		
 		productEntity.setName(productRequestDTO.getName());
 		productEntity.setPrice(productRequestDTO.getPrice());
 		
 		productEntities.add(productEntity);
-		
 		partnerEntity.setProducts(productEntities);
 		
 		return ProductDTO
@@ -74,7 +71,7 @@ public class ProductServiceImpl implements ProductService {
 				.price(productRequestDTO.getPrice())
 				.build();
 	}
-
+	
 	@Override
 	public ProductDTO getProductBySkuId(String skuId) {
 		Optional<PartnerEntity> partnerEntity = partnerRepository.findByProductsSkuId(skuId);
@@ -82,8 +79,9 @@ public class ProductServiceImpl implements ProductService {
 			ProductEntity productEntity = filterProductBySkuId(skuId, partnerEntity.get().getProducts());
 			return createProductDTOFromEntity(productEntity);
 		}
-		throw new RuntimeException("Cannot found skuId with id: " + skuId);
+		throw new SkuNotFoundException(skuId);
 	}
+	
 	@Override
 	public void deleteProduct(String skuId) {
 		PartnerEntity partner = findSkuId(skuId);
@@ -93,16 +91,16 @@ public class ProductServiceImpl implements ProductService {
 		
 		partnerRepository.save(partner);
 	}
-
+	
 	private ProductEntity filterProductBySkuId(String skuId, List<ProductEntity> products) {
-		Optional<ProductEntity> optionalProductEntity = products.stream().filter(productEntity ->
-				productEntity.getSkuId().equals(skuId)).findFirst();
-
+		Optional<ProductEntity> optionalProductEntity = products.stream().filter(productEntity -> productEntity.getSkuId().equals(skuId)).findFirst();
+		
 		if (optionalProductEntity.isPresent()) {
 			return optionalProductEntity.get();
 		}
-		throw new ProductNotFoundException(skuId);
+		throw new SkuNotFoundException(skuId);
 	}
+	
 	private PartnerEntity findSkuId(String skuId) {
 		Optional<PartnerEntity> partnerEntityOptional = partnerRepository.findByProductsSkuId(skuId);
 		if (partnerEntityOptional.isPresent()) {
@@ -110,8 +108,8 @@ public class ProductServiceImpl implements ProductService {
 		}
 		throw new SkuNotFoundException(skuId);
 	}
-
-
+	
+	
 	private List<ProductDTO> createProductDTOfromEntityList(List<ProductEntity> products) {
 		return products.stream().map(this::createProductDTOFromEntity).toList();
 	}
@@ -127,23 +125,15 @@ public class ProductServiceImpl implements ProductService {
 	}
 	
 	private List<ProductEntity> createProductEntityFromDTOs(List<ProductRequestDTO> productRequestDTOs) {
-		return productRequestDTOs.stream().map(productRequestDTO -> ProductEntity
-				.builder()
-				.skuId(generateSkuId())
-				.name(productRequestDTO.getName())
-				.price(productRequestDTO.getPrice())
-				.category(generateCategoryId())
-				.build())
+		return productRequestDTOs.stream().map(productRequestDTO ->
+						ProductEntity
+								.builder()
+								.skuId(generateSkuId())
+								.name(productRequestDTO.getName())
+								.price(productRequestDTO.getPrice())
+								.category(generateCategoryId())
+								.build())
 				.toList();
-	}
-	
-	private PartnerDTO createDTOFromPartnerEntity(PartnerEntity partnerEntity) {
-		return PartnerDTO
-				.builder()
-				.id(partnerEntity.getId())
-				.name(partnerEntity.getName())
-				.products(partnerEntity.getProducts())
-				.build();
 	}
 	
 	private String generateSkuId() {
@@ -163,8 +153,5 @@ public class ProductServiceImpl implements ProductService {
 		}
 		return categoryId.toString();
 	}
-
-
-	
 	
 }
