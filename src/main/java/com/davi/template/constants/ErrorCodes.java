@@ -12,6 +12,7 @@ public enum ErrorCodes {
 	INVENTORY_NOT_FOUND("Inventory not found"),
 	PRICE_NOT_FOUND("Price not found"),
 	SKU_NOT_FOUND("Sku not found"),
+	PARTNER_NOT_FOUND("PARTNER_NOT_FOUND"),
 	PROCESS_NOT_FOUND("Process not found"),
 	REPROCESS_NOT_FOUND("Reprocess not found"),
 	PRODUCT_NOT_PUBLISHED("Product not published"),

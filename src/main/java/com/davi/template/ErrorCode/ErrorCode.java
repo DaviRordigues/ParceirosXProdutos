@@ -13,6 +13,7 @@ public class ErrorCode {
                 Map.entry(HttpStatus.CREATED, "Created"),
                 Map.entry(HttpStatus.BAD_REQUEST, "Bad Request"),
                 Map.entry(HttpStatus.NOT_FOUND, "Not Found"));
+
     }
     public static Map<String, Object> getErrorResponse(HttpStatus status, String code, String description) {
         Map<String, Object> errorResponse = new HashMap<>();
