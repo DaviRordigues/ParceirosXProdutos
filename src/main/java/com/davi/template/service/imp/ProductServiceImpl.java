@@ -171,7 +171,6 @@ public class ProductServiceImpl implements ProductService {
 					.build();
 			productEntities.add(productEntity);
 		}
-		//TODO: EXISTE UM MÉTODO QUE ADICIONA O PRODUTO AO PARCEIRO, DESTA FORMA VOCE ESTA PEDINDO PARA QUE ELE SALVE 10000 REGISTROS DE UMA UNICA VEZ
 		partnerEntity.getProducts().addAll(productEntities);
 		partnerRepository.save(partnerEntity);
 	}
