@@ -16,7 +16,10 @@ public enum ErrorCodes {
 	PROCESS_NOT_FOUND("Process not found"),
 	REPROCESS_NOT_FOUND("Reprocess not found"),
 	PRODUCT_NOT_PUBLISHED("Product not published"),
+	FILE_READ_ERROR("File read error"),
 	SKU_NOT_PUBLISHED("Sku not published");
+	
+	
 	
 	private final String message;
 	

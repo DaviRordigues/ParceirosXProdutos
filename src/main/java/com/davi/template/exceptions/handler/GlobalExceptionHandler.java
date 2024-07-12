@@ -2,6 +2,7 @@ package com.davi.template.exceptions.handler;
 
 import com.davi.template.constants.ErrorCodes;
 import com.davi.template.exceptions.ExceptionResponse;
+import com.davi.template.exceptions.file.ReadFileException;
 import com.davi.template.exceptions.partner.PartnerNotFoundException;
 import com.davi.template.exceptions.sku.SkuNotFoundException;
 import lombok.extern.log4j.Log4j2;
@@ -40,5 +41,14 @@ public class GlobalExceptionHandler {
 		ExceptionResponse exceptionResponse = new ExceptionResponse(ErrorCodes.PARTNER_NOT_FOUND, ex.getMessage());
 
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exceptionResponse);
+	}
+	
+	@ExceptionHandler(ReadFileException.class)
+	public ResponseEntity<Object> handleReadFileException(ReadFileException ex) {
+		log.error("GlobalExceptionHandler.handleReadFileException - Cannot read file:", ex);
+		
+		ExceptionResponse exceptionResponse = new ExceptionResponse(ErrorCodes.FILE_READ_ERROR, ex.getMessage());
+		
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exceptionResponse);
 	}
 }

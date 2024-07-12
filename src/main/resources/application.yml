@@ -13,4 +13,4 @@ spring:
 
 partners:
   file:
-    path: partners.json
+    path: static/partners.json
