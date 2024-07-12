@@ -10,8 +10,10 @@ import com.davi.template.service.PartnerService;
 import com.davi.template.service.ProductService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -152,6 +154,24 @@ public class ProductServiceImpl implements ProductService {
 			}
 		}
 		return categoryId.toString();
+	}
+	@Override
+	public void addBulkProductsToPartner(String partnerId) {
+		PartnerEntity partnerEntity = partnerService.findPartnerById(partnerId);
+		List<ProductEntity> productEntities = new ArrayList<>();
+
+		for (int i = 0; i < 10000; i++) {
+			ProductEntity productEntity = ProductEntity.builder()
+					.skuId("SKU" + i)
+					.name("Product " + i)
+					.price(100.0 + i)
+					.category("Category " + (i % 10))
+					.build();
+			productEntities.add(productEntity);
+		}
+
+		partnerEntity.getProducts().addAll(productEntities);
+		partnerRepository.save(partnerEntity);
 	}
 	
 }

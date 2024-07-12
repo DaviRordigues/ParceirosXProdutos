@@ -16,4 +16,5 @@ public interface ProductService {
 	ProductDTO updateProduct(String skuId, ProductRequestDTO productRequestDTO);
 	
 	void deleteProduct(String skuId);
-}
+
+	void addBulkProductsToPartner(String partnerId);}
