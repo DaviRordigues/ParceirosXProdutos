@@ -26,6 +26,7 @@ public class PartnerController {
 	private final PartnerService partnerService;
 	
 	@GetMapping
+	//TODO: Este endpoint precisa ser paginado
 	public ResponseEntity<List<PartnerDTO>> getAllPartners() {
 		List<PartnerDTO> partners = partnerService.getAllPartners();
 		return ResponseEntity.ok(partners);

@@ -18,6 +18,7 @@ public class ProductController {
 	private final ProductService productService;
 
 	@GetMapping("partner/{partnerId}")
+	//TODO: Este endpoint precisa ser paginado
 	public ResponseEntity<List<ProductDTO>> getAllProductsFromPartner(@PathVariable String partnerId) {
 		return ResponseEntity.ok(productService.getAllProducts(partnerId));
 	}
@@ -42,6 +43,7 @@ public class ProductController {
 
 	@PostMapping("/partner/{partnerId}/bulk-add")
 	@ResponseStatus(HttpStatus.ACCEPTED)
+	//TODO ESTE NÃO É UM TIPO DE RETORNO IDEAL. VERIFIQUE OS OUTROS MÉTODOS
 	public void addBulkProductsToPartner(@PathVariable String partnerId) {
 		productService.addBulkProductsToPartner(partnerId);
 	}

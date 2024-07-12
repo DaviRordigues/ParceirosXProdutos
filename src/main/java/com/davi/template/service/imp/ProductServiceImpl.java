@@ -155,11 +155,13 @@ public class ProductServiceImpl implements ProductService {
 		}
 		return categoryId.toString();
 	}
+	//TODO: SERIA MAIS INTERESSANTE QUE ESTE MÉTODO FOSSE ASSINCRONO
+	//TODO: AQUI NÃO É UM BOM LOCAL PARA UM MÉTODO ASSINADO COMO @OVERRIDE
 	@Override
 	public void addBulkProductsToPartner(String partnerId) {
 		PartnerEntity partnerEntity = partnerService.findPartnerById(partnerId);
 		List<ProductEntity> productEntities = new ArrayList<>();
-
+		
 		for (int i = 0; i < 10000; i++) {
 			ProductEntity productEntity = ProductEntity.builder()
 					.skuId("SKU" + i)
@@ -169,7 +171,7 @@ public class ProductServiceImpl implements ProductService {
 					.build();
 			productEntities.add(productEntity);
 		}
-
+		//TODO: EXISTE UM MÉTODO QUE ADICIONA O PRODUTO AO PARCEIRO, DESTA FORMA VOCE ESTA PEDINDO PARA QUE ELE SALVE 10000 REGISTROS DE UMA UNICA VEZ
 		partnerEntity.getProducts().addAll(productEntities);
 		partnerRepository.save(partnerEntity);
 	}
