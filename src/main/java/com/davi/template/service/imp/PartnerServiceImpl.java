@@ -27,11 +27,17 @@ public class PartnerServiceImpl implements PartnerService {
 	public PartnerServiceImpl(PartnerRepository partnerRepository) {
 		this.partnerRepository = partnerRepository;
 	}
-	
+
 	@Override
-	public List<PartnerDTO> getAllPartners() {
+	public List<PartnerDTO> getAllPartners(int page, int size) {
 		List<PartnerEntity> partners = partnerRepository.findAll();
-		return partners.stream()
+
+		int start = page * size;
+		int end = Math.min(start + size, partners.size());
+
+		List<PartnerEntity> paginatedPartners = partners.subList(start, end);
+
+		return paginatedPartners.stream()
 				.map(this::createPartnerDTOFromPartnerEntity)
 				.toList();
 	}

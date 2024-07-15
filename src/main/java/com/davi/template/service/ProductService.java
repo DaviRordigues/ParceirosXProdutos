@@ -7,14 +7,16 @@ import com.davi.template.entity.ProductEntity;
 import java.util.List;
 
 public interface ProductService {
-	List<ProductDTO> getAllProducts(String partnerId);
+	List<ProductDTO> getAllProducts(String partnerId, int page, int size);
 
-	ProductDTO  getProductBySkuId(String skuId);
-	
+	ProductDTO getProductBySkuId(String skuId);
+
 	List<ProductDTO> createProduct(String partnerId, List<ProductRequestDTO> products);
-	
+
 	ProductDTO updateProduct(String skuId, ProductRequestDTO productRequestDTO);
-	
+
 	void deleteProduct(String skuId);
 
-	void addBulkProductsToPartner(String partnerId);}
+	void addBulkProductsToPartner(String partnerId);
+}
+

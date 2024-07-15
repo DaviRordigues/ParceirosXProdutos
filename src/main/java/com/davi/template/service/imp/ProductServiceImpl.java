@@ -27,16 +27,21 @@ public class ProductServiceImpl implements ProductService {
 	
 	private final PartnerService partnerService;
 	private final Random random = new Random();
-	
+
 	@Override
-	public List<ProductDTO> getAllProducts(String partnerId) {
+	public List<ProductDTO> getAllProducts(String partnerId, int page, int size) {
 		PartnerEntity partnerEntity = partnerService.findPartnerById(partnerId);
-		
 		List<ProductEntity> productEntities = partnerEntity.getProducts();
-		
-		return createProductDTOfromEntityList(productEntities);
+
+		int start = page * size;
+		int end = Math.min(start + size, productEntities.size());
+
+		List<ProductEntity> paginatedProducts = productEntities.subList(start, end);
+
+		return createProductDTOfromEntityList(paginatedProducts);
 	}
-	
+
+
 	@Override
 	public List<ProductDTO> createProduct(String partnerId, List<ProductRequestDTO> productRequestDTO) {
 		PartnerEntity partnerEntity = partnerService.findPartnerById(partnerId);
@@ -73,7 +78,8 @@ public class ProductServiceImpl implements ProductService {
 				.price(productRequestDTO.getPrice())
 				.build();
 	}
-	
+
+
 	@Override
 	public ProductDTO getProductBySkuId(String skuId) {
 		Optional<PartnerEntity> partnerEntity = partnerRepository.findByProductsSkuId(skuId);
@@ -157,12 +163,12 @@ public class ProductServiceImpl implements ProductService {
 	}
 	//TODO: SERIA MAIS INTERESSANTE QUE ESTE MÉTODO FOSSE ASSINCRONO
 	//TODO: AQUI NÃO É UM BOM LOCAL PARA UM MÉTODO ASSINADO COMO @OVERRIDE
-	@Override
+	@Async
 	public void addBulkProductsToPartner(String partnerId) {
 		PartnerEntity partnerEntity = partnerService.findPartnerById(partnerId);
 		List<ProductEntity> productEntities = new ArrayList<>();
 		
-		for (int i = 0; i < 10000; i++) {
+		for (int i = 0; i < 100; i++) {
 			ProductEntity productEntity = ProductEntity.builder()
 					.skuId("SKU" + i)
 					.name("Product " + i)
