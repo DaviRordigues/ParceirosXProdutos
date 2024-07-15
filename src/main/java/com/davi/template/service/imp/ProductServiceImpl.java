@@ -161,8 +161,7 @@ public class ProductServiceImpl implements ProductService {
 		}
 		return categoryId.toString();
 	}
-	//TODO: SERIA MAIS INTERESSANTE QUE ESTE MÉTODO FOSSE ASSINCRONO
-	//TODO: AQUI NÃO É UM BOM LOCAL PARA UM MÉTODO ASSINADO COMO @OVERRIDE
+	//TODO: O caso aqui não era remover o override, é mover o método para cima, aqui em baixo ficam métodos mais simples usados apenas dentro da classe
 	@Async
 	public void addBulkProductsToPartner(String partnerId) {
 		PartnerEntity partnerEntity = partnerService.findPartnerById(partnerId);

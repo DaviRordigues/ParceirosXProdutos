@@ -17,7 +17,7 @@ public class ProductController {
 
 	private final ProductService productService;
 
-	//TODO: Este endpoint precisa ser paginado
+	//TODO: a paginação nao possui apenas page a size, melhor do que enviar apenas um page e um size, experimente enviar o Pageable
 
 	@GetMapping("partner/{partnerId}")
 	public ResponseEntity<List<ProductDTO>> getAllProductsFromPartner(

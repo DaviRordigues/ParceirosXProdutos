@@ -2,6 +2,7 @@ package com.davi.template.controllers;
 
 import com.davi.template.dtos.PartnerDTO;
 import com.davi.template.dtos.requests.PartnerRequestDTO;
+//TODO: IMPORTAÇÃO NAO USADA
 import com.davi.template.entity.PartnerEntity;
 import com.davi.template.service.PartnerService;
 import lombok.AllArgsConstructor;
@@ -19,7 +20,7 @@ public class PartnerController {
 	private final PartnerService partnerService;
 	
 	@GetMapping
-	//TODO: Este endpoint precisa ser paginado
+	//TODO: a paginação nao possui apenas page a size, melhor do que enviar apenas um page e um size, experimente enviar o Pageable
 	public ResponseEntity<List<PartnerDTO>> getAllPartners(
 			@RequestParam(defaultValue = "0") int page,
 			@RequestParam(defaultValue = "10") int size) {
