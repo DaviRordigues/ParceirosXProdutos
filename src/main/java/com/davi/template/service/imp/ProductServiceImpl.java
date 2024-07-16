@@ -10,6 +10,7 @@ import com.davi.template.service.PartnerService;
 import com.davi.template.service.ProductService;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -29,16 +31,37 @@ public class ProductServiceImpl implements ProductService {
 	private final Random random = new Random();
 
 	@Override
-	public List<ProductDTO> getAllProducts(String partnerId, int page, int size) {
+	public List<ProductDTO> getAllProducts(String partnerId, Pageable pageable) {
 		PartnerEntity partnerEntity = partnerService.findPartnerById(partnerId);
 		List<ProductEntity> productEntities = partnerEntity.getProducts();
 
-		int start = page * size;
-		int end = Math.min(start + size, productEntities.size());
+		int start = (int) pageable.getOffset();
+		int end = Math.min((start + pageable.getPageSize()), productEntities.size());
 
 		List<ProductEntity> paginatedProducts = productEntities.subList(start, end);
 
-		return createProductDTOfromEntityList(paginatedProducts);
+		return paginatedProducts.stream()
+				.map(this::createProductDTOFromEntity)
+				.collect(Collectors.toList());
+	}
+	//TODO: O caso aqui não era remover o override, é mover o método para cima, aqui em baixo ficam métodos mais simples usados apenas dentro da classe
+	@Async
+	@Override
+	public void addBulkProductsToPartner(String partnerId) {
+		PartnerEntity partnerEntity = partnerService.findPartnerById(partnerId);
+		List<ProductEntity> productEntities = new ArrayList<>();
+
+		for (int i = 0; i < 100; i++) {
+			ProductEntity productEntity = ProductEntity.builder()
+					.skuId("SKU" + i)
+					.name("Product " + i)
+					.price(100.0 + i)
+					.category("Category " + (i % 10))
+					.build();
+			productEntities.add(productEntity);
+		}
+		partnerEntity.getProducts().addAll(productEntities);
+		partnerRepository.save(partnerEntity);
 	}
 
 
@@ -161,23 +184,6 @@ public class ProductServiceImpl implements ProductService {
 		}
 		return categoryId.toString();
 	}
-	//TODO: O caso aqui não era remover o override, é mover o método para cima, aqui em baixo ficam métodos mais simples usados apenas dentro da classe
-	@Async
-	public void addBulkProductsToPartner(String partnerId) {
-		PartnerEntity partnerEntity = partnerService.findPartnerById(partnerId);
-		List<ProductEntity> productEntities = new ArrayList<>();
-		
-		for (int i = 0; i < 100; i++) {
-			ProductEntity productEntity = ProductEntity.builder()
-					.skuId("SKU" + i)
-					.name("Product " + i)
-					.price(100.0 + i)
-					.category("Category " + (i % 10))
-					.build();
-			productEntities.add(productEntity);
-		}
-		partnerEntity.getProducts().addAll(productEntities);
-		partnerRepository.save(partnerEntity);
-	}
+
 	
 }

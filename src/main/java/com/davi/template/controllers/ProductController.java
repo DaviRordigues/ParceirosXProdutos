@@ -4,6 +4,8 @@ import com.davi.template.dtos.ProductDTO;
 import com.davi.template.dtos.requests.ProductRequestDTO;
 import com.davi.template.service.ProductService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,9 +24,8 @@ public class ProductController {
 	@GetMapping("partner/{partnerId}")
 	public ResponseEntity<List<ProductDTO>> getAllProductsFromPartner(
 			@PathVariable String partnerId,
-			@RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "10") int size) {
-		List<ProductDTO> products = productService.getAllProducts(partnerId, page, size);
+			@PageableDefault(page = 0, size = 10) Pageable pageable) {
+		List<ProductDTO> products = productService.getAllProducts(partnerId, pageable);
 		return ResponseEntity.ok(products);
 	}
 

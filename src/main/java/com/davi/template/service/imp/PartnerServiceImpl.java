@@ -11,70 +11,66 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class PartnerServiceImpl implements PartnerService {
 	@Value("${partners.file.path}")
 	private String partnersFilePath;
 	private final PartnerRepository partnerRepository;
-	
+
 	public PartnerServiceImpl(PartnerRepository partnerRepository) {
 		this.partnerRepository = partnerRepository;
 	}
 
 	@Override
-	public List<PartnerDTO> getAllPartners(int page, int size) {
-		List<PartnerEntity> partners = partnerRepository.findAll();
-
-		int start = page * size;
-		int end = Math.min(start + size, partners.size());
-
-		List<PartnerEntity> paginatedPartners = partners.subList(start, end);
-
-		return paginatedPartners.stream()
+	public List<PartnerDTO> getAllPartners(Pageable pageable) {
+		Page<PartnerEntity> partnerPage = partnerRepository.findAll(pageable);
+		return partnerPage.stream()
 				.map(this::createPartnerDTOFromPartnerEntity)
-				.toList();
+				.collect(Collectors.toList());
 	}
-	
+
 	@Override
 	public PartnerDTO getPartnerById(String id) {
 		PartnerEntity partnerEntity = findPartnerById(id);
 		return createPartnerDTOFromPartnerEntity(partnerEntity);
 	}
-	
+
 	@Override
 	public PartnerDTO createPartner(PartnerRequestDTO partnerRequestDTO) {
-		PartnerEntity partnerEntity = PartnerEntity
-				.builder()
+		PartnerEntity partnerEntity = PartnerEntity.builder()
 				.id(generateIdFromName(partnerRequestDTO.getName()))
 				.name(partnerRequestDTO.getName())
 				.build();
-		
+
 		partnerEntity = partnerRepository.save(partnerEntity);
-		
+
 		return createPartnerDTOFromPartnerEntity(partnerEntity);
 	}
-	
+
 	@Override
 	public PartnerDTO updatePartner(String id, PartnerRequestDTO partnerRequestDTO) {
 		PartnerEntity partnerEntity = findPartnerById(id);
-		
+
 		partnerRepository.delete(partnerEntity);
-		
+
 		partnerEntity.setId(generateIdFromName(partnerRequestDTO.getName()));
 		partnerEntity.setName(partnerRequestDTO.getName());
-		
+
 		partnerEntity = partnerRepository.save(partnerEntity);
-		
+
 		return createPartnerDTOFromPartnerEntity(partnerEntity);
 	}
-	
+
 	@Override
 	public PartnerEntity findPartnerById(String id) {
 		Optional<PartnerEntity> partnerEntityOptional = partnerRepository.findById(id);
@@ -83,28 +79,27 @@ public class PartnerServiceImpl implements PartnerService {
 		}
 		throw new PartnerNotFoundException("Cannot found partnerId: " + id);
 	}
-	
+
 	@Override
 	public void deletePartner(String id) {
 		PartnerEntity partnerEntity = findPartnerById(id);
 		partnerRepository.delete(partnerEntity);
 	}
-	
+
 	@Override
 	public void createBulkPartners() {
 		try {
 			File file = new ClassPathResource(partnersFilePath).getFile();
-			
+
 			ObjectMapper objectMapper = new ObjectMapper();
-			List<PartnerRequestDTO> partnerRequestDTOS = objectMapper.readValue(file, new TypeReference<>() {
-			});
+			List<PartnerRequestDTO> partnerRequestDTOS = objectMapper.readValue(file, new TypeReference<>() {});
 			partnerRequestDTOS.forEach(this::createPartner);
-			
+
 		} catch (IOException ioException) {
 			throw new ReadFileException(partnersFilePath);
 		}
 	}
-	
+
 	private PartnerDTO createPartnerDTOFromPartnerEntity(PartnerEntity partnerEntity) {
 		return PartnerDTO.builder()
 				.id(partnerEntity.getId())
@@ -112,7 +107,7 @@ public class PartnerServiceImpl implements PartnerService {
 				.products(partnerEntity.getProducts())
 				.build();
 	}
-	
+
 	private String generateIdFromName(String name) {
 		String[] words = name.split(" ");
 		StringBuilder idBuilder = new StringBuilder();

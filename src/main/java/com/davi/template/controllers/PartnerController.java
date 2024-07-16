@@ -3,9 +3,10 @@ package com.davi.template.controllers;
 import com.davi.template.dtos.PartnerDTO;
 import com.davi.template.dtos.requests.PartnerRequestDTO;
 //TODO: IMPORTAÇÃO NAO USADA
-import com.davi.template.entity.PartnerEntity;
 import com.davi.template.service.PartnerService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,13 +19,12 @@ import java.util.List;
 public class PartnerController {
 	
 	private final PartnerService partnerService;
-	
+
 	@GetMapping
 	//TODO: a paginação nao possui apenas page a size, melhor do que enviar apenas um page e um size, experimente enviar o Pageable
 	public ResponseEntity<List<PartnerDTO>> getAllPartners(
-			@RequestParam(defaultValue = "0") int page,
-			@RequestParam(defaultValue = "10") int size) {
-		List<PartnerDTO> partners = partnerService.getAllPartners(page, size);
+			@PageableDefault(page = 0, size = 10) Pageable pageable) {
+		List<PartnerDTO> partners = partnerService.getAllPartners(pageable);
 		return ResponseEntity.ok(partners);
 	}
 	@GetMapping("/{id}")
