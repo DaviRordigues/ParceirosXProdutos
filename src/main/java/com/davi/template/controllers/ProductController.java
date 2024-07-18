@@ -18,8 +18,8 @@ import java.util.List;
 public class ProductController {
 
 	private final ProductService productService;
-
-	//TODO: a paginação nao possui apenas page a size, melhor do que enviar apenas um page e um size, experimente enviar o Pageable
+	
+	//TODO: 0 e 10 sao default, voce nao precisa declaralos caso passar essas quantidades, @PageableDefault também nao se faz necessário
 
 	@GetMapping("partner/{partnerId}")
 	public ResponseEntity<List<ProductDTO>> getAllProductsFromPartner(

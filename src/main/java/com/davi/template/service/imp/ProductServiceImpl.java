@@ -39,12 +39,11 @@ public class ProductServiceImpl implements ProductService {
 		int end = Math.min((start + pageable.getPageSize()), productEntities.size());
 
 		List<ProductEntity> paginatedProducts = productEntities.subList(start, end);
-
+		//TODO: .collect(Collectors.toList()); é uma lista mutável, neste caso é melhor utilizar o .toList() pois não faremos mais nada com esse retorno, isso economiza memória e proteje o objeto
 		return paginatedProducts.stream()
 				.map(this::createProductDTOFromEntity)
 				.collect(Collectors.toList());
 	}
-	//TODO: O caso aqui não era remover o override, é mover o método para cima, aqui em baixo ficam métodos mais simples usados apenas dentro da classe
 	@Async
 	@Override
 	public void addBulkProductsToPartner(String partnerId) {

@@ -2,7 +2,6 @@ package com.davi.template.controllers;
 
 import com.davi.template.dtos.PartnerDTO;
 import com.davi.template.dtos.requests.PartnerRequestDTO;
-//TODO: IMPORTAÇÃO NAO USADA
 import com.davi.template.service.PartnerService;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -21,7 +20,7 @@ public class PartnerController {
 	private final PartnerService partnerService;
 
 	@GetMapping
-	//TODO: a paginação nao possui apenas page a size, melhor do que enviar apenas um page e um size, experimente enviar o Pageable
+	//TODO: 0 e 10 sao default, voce nao precisa declaralos caso passar essas quantidades, @PageableDefault também nao se faz necessário
 	public ResponseEntity<List<PartnerDTO>> getAllPartners(
 			@PageableDefault(page = 0, size = 10) Pageable pageable) {
 		List<PartnerDTO> partners = partnerService.getAllPartners(pageable);
